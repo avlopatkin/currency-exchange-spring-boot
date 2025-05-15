@@ -2,11 +2,9 @@ package org.example.currency.currencyexchangespringboot.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.currency.currencyexchangespringboot.entity.Currency;
+import org.example.currency.currencyexchangespringboot.rest.CurrencyDto;
 import org.example.currency.currencyexchangespringboot.service.CurrencyService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,6 +16,11 @@ public class CurrencyController  {
     @PostMapping
     public void create (@RequestBody Currency currency) {
         currencyService.create(currency);
+    }
+
+    @GetMapping("/{id}")
+    public CurrencyDto getOne(@PathVariable Long id) {
+        return currencyService.getOne(id);
     }
 
 }
