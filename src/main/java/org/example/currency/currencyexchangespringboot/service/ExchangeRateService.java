@@ -5,12 +5,15 @@ import org.example.currency.currencyexchangespringboot.entity.Currency;
 import org.example.currency.currencyexchangespringboot.entity.ExchangeRate;
 import org.example.currency.currencyexchangespringboot.repository.CurrencyRepository;
 import org.example.currency.currencyexchangespringboot.repository.ExchangeRateRepository;
+import org.example.currency.currencyexchangespringboot.rest.ConversionDto;
 import org.example.currency.currencyexchangespringboot.rest.ExchangeRatesRequest;
 import org.example.currency.currencyexchangespringboot.rest.ExchangeRatesResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -18,6 +21,7 @@ import java.util.List;
 public class ExchangeRateService {
     private final ExchangeRateRepository exchangeRateRepository;
     private final CurrencyRepository currencyRepository;
+//    private final ExchangeRateService exchangeRateService;
 
     public List<ExchangeRatesResponse> getAllRates() {
         return exchangeRateRepository.findAll().stream()
@@ -52,5 +56,30 @@ public class ExchangeRateService {
                 savedRate.getBaseCurrency(),
                 savedRate.getTargetCurrency(),
                 savedRate.getRate());
+    }
+
+    public ExchangeRatesResponse updateRate(String baseCode, String targetCode, BigDecimal newRate) {
+        ExchangeRate rate = exchangeRateRepository.findByBaseCurrencyCodes(baseCode, targetCode)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Exchange rate not found"));
+
+        rate.setRate(newRate);
+        ExchangeRate updatedRate = exchangeRateRepository.save(rate);
+
+        return new ExchangeRatesResponse(
+                updatedRate.getId(),
+                updatedRate.getBaseCurrency(),
+                updatedRate.getTargetCurrency(),
+                updatedRate.getRate()
+        );
+    }
+
+    public ConversionDto convert(String fromCurrency, String toCurrency, BigDecimal amount) {
+        ExchangeRate rate = exchangeRateRepository.findByBaseCurrencyCodes(fromCurrency, toCurrency)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Exchange rate not found"));
+
+        BigDecimal result = amount.multiply(rate.getRate())
+                .setScale(2, RoundingMode.HALF_UP);
+
+        return new ConversionDto(fromCurrency, toCurrency, amount, result, rate.getRate());
     }
 }

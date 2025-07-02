@@ -18,13 +18,10 @@ public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Inte
         )
         SELECT er.*
         FROM exchange_rates er
-        JOIN currency_ids ON true
-        WHERE
-            er.base_currency_id = currency_ids.base_id
+        WHERE er.base_currency_id = currency_ids.base_id
             AND er.target_currency_id = currency_ids.target_id
         """,
             nativeQuery = true)
-
     Optional<ExchangeRate> findByBaseCurrencyCodes(
             @Param("baseCode") String baseCode,
             @Param("targetCode") String targetCode
