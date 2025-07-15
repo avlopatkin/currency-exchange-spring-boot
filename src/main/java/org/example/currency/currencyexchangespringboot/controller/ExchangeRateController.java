@@ -2,9 +2,9 @@ package org.example.currency.currencyexchangespringboot.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.currency.currencyexchangespringboot.rest.ConversionDto;
+import org.example.currency.currencyexchangespringboot.rest.ExchangeRateUpdateDto;
 import org.example.currency.currencyexchangespringboot.rest.ExchangeRatesRequest;
 import org.example.currency.currencyexchangespringboot.rest.ExchangeRatesResponse;
-import org.example.currency.currencyexchangespringboot.rest.UpdateExchangeRateDto;
 import org.example.currency.currencyexchangespringboot.service.ExchangeRateService;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,7 +47,7 @@ public class ExchangeRateController {
     public ExchangeRatesResponse updateExchangeRate(
             @RequestParam("baseCode") String baseCode,
             @RequestParam("targetCode") String targetCode,
-            @RequestBody UpdateExchangeRateDto request
+            @RequestBody ExchangeRateUpdateDto request
             ) {
         return exchangeRateService.updateRate(baseCode, targetCode, request.rate());
     }

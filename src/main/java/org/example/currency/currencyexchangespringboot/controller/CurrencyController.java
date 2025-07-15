@@ -1,14 +1,11 @@
 package org.example.currency.currencyexchangespringboot.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.currency.currencyexchangespringboot.entity.Currency;
 import org.example.currency.currencyexchangespringboot.rest.CurrencyDto;
 import org.example.currency.currencyexchangespringboot.service.CurrencyService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
