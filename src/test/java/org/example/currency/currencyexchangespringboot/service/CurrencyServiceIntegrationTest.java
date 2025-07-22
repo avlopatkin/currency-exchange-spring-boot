@@ -5,6 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -22,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 @Testcontainers
 @ActiveProfiles("test")
-public class CurrencyServiceIntegrationTest {
+class CurrencyServiceIntegrationTest {
     @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine")
             .withDatabaseName("currency_exchanger_test")
@@ -48,22 +49,32 @@ public class CurrencyServiceIntegrationTest {
     }
 
     @Test
-    void shouldThrowNotFound_whenGetCurrencyByIdInvalid() {
-        assertThrows(ResponseStatusException.class, () -> service.getCurrencyById(666L));
+    void shouldThrowResponseStatusException_whenGetCurrencyById_ifCurrencyNotExists() {
+        var ex = assertThrows(ResponseStatusException.class, () -> service.getCurrencyById(-101L));
+
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+        assertEquals("currency not found: -101", ex.getReason());
     }
 
     @Test
-    void shouldThrowNotFound_whenGetCurrencyByCodeInvalid() {
-        assertThrows(ResponseStatusException.class, () -> service.getCurrencyByCode("USB"));
+    void shouldThrowResponseStatusException_whenGetCurrencyByCode_ifCodeNotExists() {
+        var ex = assertThrows(ResponseStatusException.class,
+                () -> service.getCurrencyByCode("USB"));
+
+        assertEquals("code not found: USB", ex.getReason());
     }
+
 
     @Test
     void shouldUpdateCurrency() {
-        CurrencyDto created = service.create(new CurrencyDto(null, "USD", "$"));
+        jdbcTemplate.update("INSERT INTO currencies (code, sign) VALUES (?, ?)", "USD", "$");
 
-        CurrencyDto updated = service.updateCurrency(created.id(), new CurrencyDto(created.id(), "EUR", "€"));
+        CurrencyDto updated = service.updateCurrency(
+                1L,
+                new CurrencyDto(1L, "EUR", "€")
+        );
 
-        assertEquals(created.id(), updated.id());
+        assertEquals(1L, updated.id());
         assertEquals("EUR", updated.code());
         assertEquals("€", updated.sign());
     }

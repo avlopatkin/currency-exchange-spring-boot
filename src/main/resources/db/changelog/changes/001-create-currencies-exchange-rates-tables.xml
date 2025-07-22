@@ -11,11 +11,7 @@
             CREATE TABLE IF NOT EXISTS currencies
             (
                 id
-                BIGINT
-                GENERATED
-                BY
-                DEFAULT AS
-                IDENTITY
+                BIGSERIAL
                 PRIMARY
                 KEY,
                 code
@@ -28,6 +24,14 @@
                 255
             )
                 );
+            ]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="002-add-index-to-currency-code" author="andreilopatkin">
+        <sql>
+            <![CDATA[
+            CREATE INDEX IF NOT EXISTS idx_currency_code ON currencies(code);
             ]]>
         </sql>
     </changeSet>

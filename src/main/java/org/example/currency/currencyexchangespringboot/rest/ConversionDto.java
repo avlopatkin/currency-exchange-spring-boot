@@ -1,7 +1,5 @@
 package org.example.currency.currencyexchangespringboot.rest;
 
-import org.example.currency.currencyexchangespringboot.entity.ExchangeRate;
-
 import java.math.BigDecimal;
 
 public record ConversionDto(
@@ -11,13 +9,4 @@ public record ConversionDto(
         BigDecimal amount,
         BigDecimal convertedAmount
 ) {
-    public ConversionDto(ExchangeRate rate, BigDecimal amount, BigDecimal convertedAmount) {
-        this(
-                new CurrencyDto(rate.getBaseCurrency()),
-                new CurrencyDto(rate.getTargetCurrency()),
-                rate.getRate(),
-                amount,
-                convertedAmount
-        );
-    }
 }

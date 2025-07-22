@@ -6,24 +6,44 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Integer> {
-    @Query(value = """
-        WITH currency_ids AS (
-            SELECT
-                (SELECT id FROM currencies WHERE code = :baseCode) AS base_id,
-                (SELECT id FROM currencies WHERE code = :targetCode) AS target_id
-        )
-        SELECT er.*
-        FROM exchange_rates er
-        WHERE er.base_currency_id = currency_ids.base_id
-            AND er.target_currency_id = currency_ids.target_id
-        """,
-            nativeQuery = true)
-    Optional<ExchangeRate> findByBaseCurrencyCodes(
+//    @Query(value = """
+//        WITH currency_ids AS (
+//            SELECT
+//                (SELECT id FROM currencies WHERE code = :baseCode) AS base_id,
+//                (SELECT id FROM currencies WHERE code = :targetCode) AS target_id
+//        )
+//        SELECT er.*
+//        FROM exchange_rates er
+//        WHERE er.base_currency_id = currency_ids.base_id
+//            AND er.target_currency_id = currency_ids.target_id
+//        """,
+//            nativeQuery = true)
+//    Optional<ExchangeRate> findByBaseCurrencyCodes(
+//            @Param("baseCode") String baseCode,
+//            @Param("targetCode") String targetCode
+//    );
+
+    @Query("""
+            SELECT er FROM ExchangeRate er
+            JOIN FETCH er.baseCurrency
+            JOIN FETCH er.targetCurrency
+            WHERE er.baseCurrency.code = :baseCode
+              AND er.targetCurrency.code = :targetCode
+            """)
+    Optional<ExchangeRate> findByBaseCurrencyCodesWithCurrencies(
             @Param("baseCode") String baseCode,
             @Param("targetCode") String targetCode
     );
+
+    @Query("""
+            SELECT er FROM ExchangeRate er
+            JOIN FETCH er.baseCurrency
+            JOIN FETCH er.targetCurrency
+            """)
+    List<ExchangeRate> findRateWithCurrencies();
 }

@@ -45,13 +45,13 @@ public class CurrencyService {
 
     public CurrencyDto getCurrencyById(Long id) {
         Currency currency = currencyRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "currency not found" + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "currency not found: " + id));
         return new CurrencyDto(currency.getId(), currency.getCode(), currency.getSign());
     }
 
     public CurrencyDto getCurrencyByCode(String code) {
         Currency currency = currencyRepository.findByCode(code)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "code not found" + code));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "code not found: " + code));
         return new CurrencyDto(currency.getId(), currency.getCode(), currency.getSign());
     }
 }
