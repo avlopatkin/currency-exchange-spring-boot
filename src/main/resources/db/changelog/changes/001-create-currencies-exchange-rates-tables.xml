@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.15.xsd">
+
+    <changeSet id="001-create-currencies-and-exchange-rates" author="andreilopatkin">
+        <sql>
+            <![CDATA[
+            CREATE TABLE IF NOT EXISTS currencies
+            (
+                id
+                BIGSERIAL
+                PRIMARY
+                KEY,
+                code
+                VARCHAR
+            (
+                255
+            ),
+                sign VARCHAR
+            (
+                255
+            )
+                );
+            ]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="002-add-index-to-currency-code" author="andreilopatkin">
+        <sql>
+            <![CDATA[
+            CREATE INDEX IF NOT EXISTS idx_currency_code ON currencies(code);
+            ]]>
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

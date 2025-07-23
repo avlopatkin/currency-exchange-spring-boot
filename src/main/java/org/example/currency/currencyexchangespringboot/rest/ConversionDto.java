@@ -2,10 +2,11 @@ package org.example.currency.currencyexchangespringboot.rest;
 
 import java.math.BigDecimal;
 
-public record ExchangeRatesResponse(
-        Integer id,
+public record ConversionDto(
         CurrencyDto baseCurrency,
         CurrencyDto targetCurrency,
-        BigDecimal rate
+        BigDecimal rate,
+        BigDecimal amount,
+        BigDecimal convertedAmount
 ) {
 }
